@@ -1,16 +1,42 @@
-# React + Vite
+# 프론트엔드 실행 안내
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 개발 서버 실행
 
-Currently, two official plugins are available:
+1. 의존성 설치
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+```
 
-## React Compiler
+2. 개발 서버 실행
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run dev
+```
 
-## Expanding the ESLint configuration
+기본 접속 주소는 `http://localhost:5173`입니다.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## API 연동 방식
+
+- 프론트엔드 API 클라이언트 기본 경로는 `/api/v1`입니다.
+- 개발 서버에서 `/api` 요청은 `http://localhost:8080`으로 프록시됩니다.
+- `frontend/.env`의 `VITE_USE_API_STUB=false`이면 백엔드 API를 사용합니다.
+
+## 스텁 모드
+
+백엔드 없이 화면 흐름만 확인하려면 `frontend/.env`에서 아래처럼 설정합니다.
+
+```env
+VITE_USE_API_STUB=true
+```
+
+스텁 로그인 계정:
+
+- 이메일: `demo@aimentor.dev`
+- 비밀번호: `password123`
+
+## 빌드
+
+```bash
+npm run build
+```
