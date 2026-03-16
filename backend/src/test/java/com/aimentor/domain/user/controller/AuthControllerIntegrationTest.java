@@ -43,6 +43,7 @@ class AuthControllerIntegrationTest {
     void signupShouldCreateUserAndEncryptPassword() throws Exception {
         String requestBody = """
                 {
+                  "name": "홍길동",
                   "email": "user@example.com",
                   "password": "password1"
                 }
@@ -53,12 +54,14 @@ class AuthControllerIntegrationTest {
                         .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.name").value("홍길동"))
                 .andExpect(jsonPath("$.data.email").value("user@example.com"))
                 .andExpect(jsonPath("$.data.role").value("USER"))
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.data.refreshToken").isNotEmpty());
 
         User savedUser = userRepository.findByEmail("user@example.com").orElseThrow();
+        assertThat(savedUser.getName()).isEqualTo("홍길동");
         assertThat(savedUser.getPassword()).isNotEqualTo("password1");
         assertThat(passwordEncoder.matches("password1", savedUser.getPassword())).isTrue();
         assertThat(savedUser.getRefreshToken()).isNotBlank();
@@ -70,6 +73,7 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
+                                  "name": "로그인 사용자",
                                   "email": "login@example.com",
                                   "password": "password1"
                                 }
@@ -86,6 +90,7 @@ class AuthControllerIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.name").value("로그인 사용자"))
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.data.refreshToken").isNotEmpty());
     }
@@ -96,6 +101,7 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
+                                  "name": "리프레시 사용자",
                                   "email": "refresh@example.com",
                                   "password": "password1"
                                 }

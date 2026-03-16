@@ -104,7 +104,22 @@ const recommendedNextActions = [
 
 const useAppStore = create((set) => ({
   currentUser: null,
-  setCurrentUser: (currentUser) => set({ currentUser }),
+  authHydrated: false,
+  setCurrentUser: (currentUser) =>
+    set({
+      currentUser,
+      authHydrated: true,
+    }),
+  hydrateAuth: (session) =>
+    set({
+      currentUser: session?.user ?? null,
+      authHydrated: true,
+    }),
+  clearCurrentUser: () =>
+    set({
+      currentUser: null,
+      authHydrated: true,
+    }),
   interviewMode: '일반',
   interviewQuestions: sampleQuestions,
   currentQuestionIndex: 0,

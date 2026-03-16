@@ -28,6 +28,9 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @Column(nullable = false, length = 50)
+    private String name;
+
     @Column(nullable = false)
     private String password;
 
@@ -41,8 +44,9 @@ public class User extends BaseTimeEntity {
     private LocalDateTime refreshTokenExpiresAt;
 
     @Builder
-    public User(String email, String password, Role role) {
+    public User(String email, String name, String password, Role role) {
         this.email = email;
+        this.name = name;
         this.password = password;
         this.role = role;
     }

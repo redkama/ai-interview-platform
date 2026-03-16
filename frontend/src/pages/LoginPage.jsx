@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import authApi from '../api/authApi.js'
+import { consumeAuthNotice } from '../api/client.js'
 import StatusMessage from '../components/common/StatusMessage.jsx'
 import TextInput from '../components/forms/TextInput.jsx'
 import usePageTitle from '../hooks/usePageTitle.js'
@@ -8,6 +9,7 @@ import useAppStore from '../store/useAppStore.js'
 
 function LoginPage() {
   usePageTitle('로그인')
+  const location = useLocation()
   const navigate = useNavigate()
   const setCurrentUser = useAppStore((state) => state.setCurrentUser)
   const [formData, setFormData] = useState({
@@ -16,7 +18,16 @@ function LoginPage() {
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [notice, setNotice] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    const message = consumeAuthNotice()
+
+    if (message) {
+      setNotice(message)
+    }
+  }, [])
 
   function updateField(name, value) {
     setFormData((current) => ({
@@ -29,13 +40,15 @@ function LoginPage() {
     event.preventDefault()
     setError('')
     setSuccess('')
+    setNotice('')
     setIsSubmitting(true)
 
     try {
       const result = await authApi.login(formData)
       setCurrentUser(result.user)
       setSuccess(`${result.user.name ?? result.user.email} 계정으로 로그인되었습니다.`)
-      setTimeout(() => navigate('/dashboard'), 500)
+      const nextPath = location.state?.from?.pathname ?? '/dashboard'
+      setTimeout(() => navigate(nextPath, { replace: true }), 500)
     } catch (loginError) {
       setError(loginError.message ?? '로그인에 실패했습니다.')
     } finally {
@@ -61,7 +74,7 @@ function LoginPage() {
           </div>
         </div>
 
-        <StatusMessage variant="error" message={error} />
+        <StatusMessage variant="error" message={notice || error} />
         <StatusMessage variant="success" message={success} />
 
         <div className="editor-form">

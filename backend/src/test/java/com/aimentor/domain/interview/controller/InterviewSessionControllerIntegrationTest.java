@@ -128,6 +128,7 @@ class InterviewSessionControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
+                                  "name": "면접 사용자",
                                   "email": "%s",
                                   "password": "password1"
                                 }

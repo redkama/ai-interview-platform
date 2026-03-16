@@ -1,5 +1,9 @@
 import { extractPayload } from './apiUtils.js'
-import apiClient, { clearAuthSession, persistAuthSession } from './client.js'
+import apiClient, {
+  clearAuthSession,
+  getStoredAuthSession,
+  persistAuthSession,
+} from './client.js'
 import { stubLogin, stubSignup } from './stubDatabase.js'
 
 const useStubApi = import.meta.env.VITE_USE_API_STUB !== 'false'
@@ -8,7 +12,7 @@ function normalizeAuthPayload(payload) {
   return {
     user: {
       id: payload.user?.id ?? payload.userId,
-      name: payload.user?.name ?? payload.email,
+      name: payload.user?.name ?? payload.name ?? payload.email,
       email: payload.user?.email ?? payload.email,
       role: payload.user?.role ?? payload.role,
     },
@@ -40,6 +44,7 @@ const authApi = {
     }
 
     const response = await apiClient.post('/auth/signup', {
+      name: payload.name,
       email: payload.email,
       password: payload.password,
     })
@@ -47,7 +52,18 @@ const authApi = {
     persistAuthSession(result)
     return result
   },
-  logout() {
+  async logout() {
+    const session = getStoredAuthSession()
+
+    if (!useStubApi && session?.refreshToken) {
+      try {
+        await apiClient.post('/auth/logout', {
+          refreshToken: session.refreshToken,
+        })
+      } catch {
+      }
+    }
+
     clearAuthSession()
   },
 }

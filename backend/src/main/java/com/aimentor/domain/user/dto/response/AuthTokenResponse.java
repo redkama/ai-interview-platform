@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public record AuthTokenResponse(
         Long userId,
+        String name,
         String email,
         Role role,
         String accessToken,

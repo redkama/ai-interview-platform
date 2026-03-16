@@ -112,6 +112,7 @@ class ResumeControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
+                                  "name": "테스트 사용자",
                                   "email": "%s",
                                   "password": "password1"
                                 }
