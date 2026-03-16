@@ -23,7 +23,7 @@ function ResumePage() {
           type: 'textarea',
           rows: 10,
           placeholder: '이 이력서에 담을 경험, 프로젝트, 강점을 정리하세요.',
-        }
+        },
       ]}
       emptyTitle="아직 이력서가 없습니다."
       emptyDescription="첫 이력서를 만들어 워크플로를 시작하세요."

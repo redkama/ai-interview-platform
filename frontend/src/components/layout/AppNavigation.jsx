@@ -20,8 +20,8 @@ function AppNavigation() {
   const clearCurrentUser = useAppStore((state) => state.clearCurrentUser)
   const visibleItems = navigationItems.filter((item) => item.requiresAuth === Boolean(currentUser))
 
-  function handleLogout() {
-    authApi.logout()
+  async function handleLogout() {
+    await authApi.logout()
     clearCurrentUser()
     navigate('/login', { replace: true })
   }
