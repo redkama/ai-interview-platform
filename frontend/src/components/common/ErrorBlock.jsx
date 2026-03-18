@@ -12,3 +12,4 @@ function ErrorBlock({ message, onRetry }) {
 }
 
 export default ErrorBlock
+

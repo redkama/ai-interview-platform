@@ -3,7 +3,7 @@ import apiClient from './client.js'
 import { createStubCrud } from './stubDatabase.js'
 
 const stubApi = createStubCrud('jobPostings', 'job-posting')
-const useStubApi = import.meta.env.VITE_USE_API_STUB !== 'false'
+const useStubApi = import.meta.env.VITE_USE_API_STUB === 'true'
 
 function normalizePayload(payload) {
   return {
@@ -49,3 +49,4 @@ const jobPostingApi = {
 }
 
 export default jobPostingApi
+

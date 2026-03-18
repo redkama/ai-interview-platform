@@ -9,7 +9,7 @@ function CoverLetterPage() {
     <CrudWorkspace
       eyebrow="자기소개서 관리"
       title="자기소개서 관리"
-      description="회사와 직무에 맞춘 자기소개서를 일관된 편집 화면에서 관리할 수 있습니다."
+      description="회사와 직무에 맞춘 자기소개서를 여러 버전으로 관리할 수 있습니다."
       api={coverLetterApi}
       createEmptyItem={() => ({
         title: '',
@@ -24,11 +24,11 @@ function CoverLetterPage() {
           label: '내용',
           type: 'textarea',
           rows: 10,
-          placeholder: '자기소개서 초안을 여기에 작성하세요.',
+          placeholder: '지원 동기와 경험을 중심으로 자기소개서를 작성해 주세요.',
         },
       ]}
       emptyTitle="아직 자기소개서가 없습니다."
-      emptyDescription="직무별 초안을 저장해 두면 버전 비교가 쉬워집니다."
+      emptyDescription="직무별 초안을 만들면 면접 준비가 더 수월해집니다."
       listItemTitle={(item) => item.title}
       listItemMeta={(item) => `${item.companyName || '회사 미지정'} - ${item.updatedAt || '-'}`}
     />
@@ -36,3 +36,4 @@ function CoverLetterPage() {
 }
 
 export default CoverLetterPage
+

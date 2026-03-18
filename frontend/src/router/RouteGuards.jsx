@@ -51,3 +51,4 @@ export function IndexRedirect() {
 
   return <Navigate to={currentUser ? '/dashboard' : '/login'} replace />
 }
+

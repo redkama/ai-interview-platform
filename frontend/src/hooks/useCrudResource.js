@@ -68,9 +68,7 @@ function useCrudResource({ api, createEmptyItem }) {
     try {
       if (selectedId) {
         const updated = await api.update(selectedId, formData)
-        setItems((current) =>
-          current.map((item) => (item.id === selectedId ? updated : item)),
-        )
+        setItems((current) => current.map((item) => (item.id === selectedId ? updated : item)))
         setFormData(updated)
         setSuccessMessage('변경 사항이 저장되었습니다.')
       } else {
@@ -136,3 +134,4 @@ function useCrudResource({ api, createEmptyItem }) {
 }
 
 export default useCrudResource
+

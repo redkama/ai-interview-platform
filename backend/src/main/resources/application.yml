@@ -20,15 +20,15 @@ logging:
     org.hibernate.SQL: debug
 
 jwt:
-  secret-key: ${JWT_SECRET_KEY:KJLg+mfndIn/zvuKgcfOsO1cvWVQNGBzR6SgHlyzD3pxKVkc9HmxeF+XakpJaVNunq1T+pYovINVMQYgNqyd6g==}
-  access-token-expiration-seconds: ${JWT_ACCESS_TOKEN_EXPIRATION_SECONDS:1800}
-  refresh-token-expiration-seconds: ${JWT_REFRESH_TOKEN_EXPIRATION_SECONDS:1209600}
+  secret-key: ${JWT_SECRET:${JWT_SECRET_KEY:}}
+  access-token-expiration-seconds: ${JWT_ACCESS_EXPIRATION:${JWT_ACCESS_TOKEN_EXPIRATION_SECONDS:1800}}
+  refresh-token-expiration-seconds: ${JWT_REFRESH_EXPIRATION:${JWT_REFRESH_TOKEN_EXPIRATION_SECONDS:1209600}}
 
 integration:
   ai:
     provider: ${AI_PROVIDER:stub-ai}
     api-key: ${AI_API_KEY:}
-    base-url: ${AI_BASE_URL:}
+    base-url: ${AI_SERVICE_URL:${AI_BASE_URL:}}
     model: ${AI_MODEL:}
   speech:
     provider: ${SPEECH_PROVIDER:stub-speech}

@@ -2,7 +2,7 @@ function PagePlaceholder({ title, description, highlights }) {
   return (
     <section className="page-card">
       <div className="page-card__content">
-        <p className="page-card__eyebrow">준비 중 페이지</p>
+        <p className="page-card__eyebrow">준비 중인 페이지</p>
         <h2 className="page-card__title">{title}</h2>
         <p className="page-card__description">{description}</p>
       </div>

@@ -59,8 +59,8 @@ function LoginPage() {
   return (
     <section className="auth-page">
       <div className="auth-panel auth-panel--hero">
-        <p className="page-card__eyebrow">다시 오신 것을 환영합니다</p>
-        <h2 className="page-card__title">면접 데모를 위한 간단한 로그인 흐름입니다.</h2>
+        <p className="page-card__eyebrow">다시 시작하기</p>
+        <h2 className="page-card__title">면접 연습을 위한 간단한 로그인 화면입니다</h2>
         <p className="page-card__description">
           스텁 모드에서는 `demo@aimentor.dev / password123`로 바로 로그인할 수 있습니다.
         </p>
@@ -70,7 +70,7 @@ function LoginPage() {
         <div className="panel__header">
           <div>
             <h3 className="panel__title">로그인</h3>
-            <p className="panel__subtitle">JWT 인증 연동을 바로 붙일 수 있는 기본 로그인 폼입니다.</p>
+            <p className="panel__subtitle">JWT 인증 구조에 맞춘 기본 로그인 폼입니다.</p>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ function LoginPage() {
         </div>
 
         <p className="auth-panel__footnote">
-          계정이 없으신가요? <Link to="/signup">회원가입</Link>
+          계정이 없다면 <Link to="/signup">회원가입</Link>
         </p>
       </form>
     </section>
