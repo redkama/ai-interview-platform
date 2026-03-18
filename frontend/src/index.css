@@ -562,6 +562,218 @@ select {
   color: var(--color-text-muted);
 }
 
+.tab-row,
+.choice-row,
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.toolbar-row {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tab-chip,
+.choice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.tab-chip--active {
+  background: var(--color-primary-soft);
+  border-color: rgba(18, 18, 18, 0.14);
+}
+
+.choice-chip input {
+  margin: 0;
+}
+
+.education-test-form,
+.quiz-stack,
+.history-side-column,
+.cart-list,
+.progress-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.education-question-card,
+.lesson-card,
+.book-card,
+.quiz-card,
+.cart-item {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: #fffdf4;
+}
+
+.education-question-card__index,
+.lesson-card__meta,
+.book-card__meta {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.lesson-grid,
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.lesson-card {
+  text-align: left;
+}
+
+.lesson-card--active {
+  border-color: rgba(18, 18, 18, 0.18);
+  background: #fff8cc;
+}
+
+.progress-bar {
+  overflow: hidden;
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(18, 18, 18, 0.08);
+}
+
+.progress-bar__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffd84d, #121212);
+}
+
+.progress-stack__row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.result-highlight-card {
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+}
+
+.result-highlight-card__badge {
+  display: grid;
+  place-items: center;
+  min-height: 100px;
+  border-radius: 24px;
+  background: #fff6bf;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.education-result-copy,
+.book-detail-copy,
+.history-ai-copy,
+.quiz-feedback-copy {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.history-grid,
+.book-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+  gap: 24px;
+}
+
+.book-detail-layout {
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+}
+
+.book-card__image-wrap,
+.book-detail-layout__image-wrap {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #f3f3f3;
+}
+
+.book-card__image,
+.book-detail-layout__image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.book-detail-layout__image {
+  height: 100%;
+  min-height: 380px;
+}
+
+.book-card__footer,
+.book-detail-stats,
+.cart-summary,
+.cart-item__controls,
+.cart-item__main {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.book-detail-layout__content,
+.book-detail-actions {
+  display: grid;
+  gap: 16px;
+}
+
+.catalog-search {
+  max-width: 320px;
+}
+
+.quantity-input {
+  width: 100px;
+}
+
+.quiz-options {
+  display: grid;
+  gap: 10px;
+}
+
+.quiz-option {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.quiz-option--selected {
+  border-color: rgba(18, 18, 18, 0.16);
+  background: #fff8cc;
+}
+
+.cart-item {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.cart-item__image {
+  width: 72px;
+  height: 96px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -611,5 +823,28 @@ select {
 
   .dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .history-grid,
+  .book-detail-layout,
+  .result-highlight-card,
+  .cart-item {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar-row,
+  .book-card__footer,
+  .book-detail-stats,
+  .cart-summary,
+  .cart-item__controls,
+  .cart-item__main {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .catalog-search,
+  .quantity-input {
+    max-width: none;
+    width: 100%;
   }
 }

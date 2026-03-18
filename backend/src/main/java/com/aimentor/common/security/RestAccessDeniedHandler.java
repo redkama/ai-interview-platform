@@ -17,6 +17,6 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
             throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("{\"success\":false,\"data\":null,\"error\":{\"code\":\"ACCESS_DENIED\",\"message\":\"Access is denied.\"}}");
+        response.getWriter().write("{\"success\":false,\"data\":null,\"error\":{\"code\":\"ACCESS_DENIED\",\"message\":\"접근이 거부되었습니다.\"}}");
     }
 }

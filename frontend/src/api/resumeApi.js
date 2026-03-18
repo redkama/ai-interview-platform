@@ -3,7 +3,7 @@ import apiClient from './client.js'
 import { createStubCrud } from './stubDatabase.js'
 
 const stubApi = createStubCrud('resumes', 'resume')
-const useStubApi = import.meta.env.VITE_USE_API_STUB !== 'false'
+const useStubApi = import.meta.env.VITE_USE_API_STUB === 'true'
 
 const resumeApi = {
   async list() {
@@ -41,3 +41,4 @@ const resumeApi = {
 }
 
 export default resumeApi
+

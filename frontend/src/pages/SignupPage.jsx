@@ -59,9 +59,9 @@ function SignupPage() {
     <section className="auth-page">
       <div className="auth-panel auth-panel--hero">
         <p className="page-card__eyebrow">시작하기</p>
-        <h2 className="page-card__title">면접 준비를 위한 작업 공간을 만들어보세요.</h2>
+        <h2 className="page-card__title">면접 준비를 위한 작업 공간을 만들어 보세요.</h2>
         <p className="page-card__description">
-          이력서, 자기소개서, 채용공고 흐름을 하나의 간단한 시작 경험으로 묶었습니다.
+          이력서, 자기소개서, 채용공고, 면접 연습까지 하나의 흐름으로 이어지는 시작점입니다.
         </p>
       </div>
 
@@ -69,7 +69,7 @@ function SignupPage() {
         <div className="panel__header">
           <div>
             <h3 className="panel__title">회원가입</h3>
-            <p className="panel__subtitle">계정을 만들고 문서 관리 기능을 바로 시작하세요.</p>
+            <p className="panel__subtitle">계정을 만들고 문서 관리와 학습 기능을 바로 시작하세요.</p>
           </div>
         </div>
 
@@ -116,7 +116,7 @@ function SignupPage() {
         </div>
 
         <p className="auth-panel__footnote">
-          이미 계정이 있으신가요? <Link to="/login">로그인</Link>
+          이미 계정이 있다면 <Link to="/login">로그인</Link>
         </p>
       </form>
     </section>

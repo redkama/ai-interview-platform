@@ -3,7 +3,7 @@ import apiClient from './client.js'
 import { createStubCrud } from './stubDatabase.js'
 
 const stubApi = createStubCrud('coverLetters', 'cover-letter')
-const useStubApi = import.meta.env.VITE_USE_API_STUB !== 'false'
+const useStubApi = import.meta.env.VITE_USE_API_STUB === 'true'
 
 const coverLetterApi = {
   async list() {
@@ -41,3 +41,4 @@ const coverLetterApi = {
 }
 
 export default coverLetterApi
+

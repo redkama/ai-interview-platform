@@ -9,9 +9,11 @@ import com.aimentor.external.ai.dto.AiGenerateReportSummaryResponse;
 import com.aimentor.external.ai.dto.AiQuestionItem;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty(prefix = "integration.ai", name = "provider", havingValue = "stub-ai", matchIfMissing = true)
 public class StubAiIntegrationService implements AiIntegrationService {
 
     private final AiIntegrationProperties properties;
@@ -27,11 +29,10 @@ public class StubAiIntegrationService implements AiIntegrationService {
         for (int index = 1; index <= questionCount; index++) {
             questions.add(new AiQuestionItem(
                     index,
-                    "Stub question " + index + " for " + request.positionTitle() + ". Replace with real AI provider output."
+                    request.positionTitle() + " 지원자를 위한 기본 질문 " + index + "입니다."
             ));
         }
 
-        // Real provider integration will call the selected AI SDK or HTTP API here.
         return new AiGenerateInterviewQuestionsResponse(questions, resolveProviderName(), true);
     }
 
@@ -43,13 +44,12 @@ public class StubAiIntegrationService implements AiIntegrationService {
         int specificityScore = Math.min(100, 40 + (answerLength / 18));
         int overallScore = Math.round((relevanceScore + logicScore + specificityScore) / 3.0f);
 
-        // Real provider integration will send prompt/context and parse structured scoring here.
         return new AiAnalyzeAnswerFeedbackResponse(
                 relevanceScore,
                 logicScore,
                 specificityScore,
                 overallScore,
-                "Stub feedback generated from a simple local heuristic. Replace with provider analysis.",
+                "로컬 휴리스틱 기반 피드백입니다. 실제 AI 분석을 연결하면 더 정교한 코칭을 받을 수 있습니다.",
                 resolveProviderName(),
                 true
         );
@@ -59,10 +59,8 @@ public class StubAiIntegrationService implements AiIntegrationService {
     public AiGenerateReportSummaryResponse generateReportSummary(AiGenerateReportSummaryRequest request) {
         int feedbackCount = request.answerFeedback() == null ? 0 : request.answerFeedback().size();
 
-        // Real provider integration will summarize answer-level feedback into a session report here.
         return new AiGenerateReportSummaryResponse(
-                "Stub report summary for session '" + request.sessionTitle()
-                        + "' with " + feedbackCount + " analyzed answers. Replace with provider-generated summary.",
+                "'" + request.sessionTitle() + "' 세션의 답변 " + feedbackCount + "개를 바탕으로 만든 기본 요약입니다.",
                 resolveProviderName(),
                 true
         );

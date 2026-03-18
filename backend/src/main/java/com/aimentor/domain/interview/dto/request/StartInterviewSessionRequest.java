@@ -23,3 +23,4 @@ public record StartInterviewSessionRequest(
         Integer questionCount
 ) {
 }
+

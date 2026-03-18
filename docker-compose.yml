@@ -1,0 +1,63 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: aimentor-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: aimentor
+      MYSQL_ROOT_PASSWORD: local-password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+
+  ai-service:
+    image: python:3.13-slim
+    container_name: aimentor-ai-service
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      CODEX_API_KEY: ${CODEX_API_KEY:-}
+      CODEX_MODEL: ${CODEX_MODEL:-gpt-4.1-mini}
+      USE_MOCK: ${USE_MOCK:-true}
+      PORT: ${PORT:-8000}
+    volumes:
+      - ./ai-service:/app
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt &&
+      uvicorn main:app --host 0.0.0.0 --port $${PORT}"
+    ports:
+      - "8000:8000"
+
+  backend:
+    image: eclipse-temurin:21-jdk
+    container_name: aimentor-backend
+    restart: unless-stopped
+    working_dir: /app
+    depends_on:
+      - mysql
+      - ai-service
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      DB_URL: jdbc:mariadb://mysql:3306/aimentor?useUnicode=true&characterEncoding=UTF-8
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-local-password}
+      JWT_SECRET: ${JWT_SECRET:-replace-with-a-long-secure-secret}
+      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION:-1800}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION:-1209600}
+      AI_SERVICE_URL: http://ai-service:8000
+      GRADLE_USER_HOME: /tmp/gradle
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "chmod +x ./gradlew &&
+      ./gradlew bootRun --args='--spring.profiles.active=local'"
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql-data:

@@ -113,7 +113,7 @@ function CrudWorkspace({
           <div className="panel__header">
             <div>
               <h3 className="panel__title">{selectedId ? '항목 수정' : '항목 생성'}</h3>
-              <p className="panel__subtitle">이 편집기에서 바로 저장할 수 있습니다.</p>
+              <p className="panel__subtitle">오른쪽 편집기에서 바로 내용을 저장할 수 있습니다.</p>
             </div>
           </div>
 
@@ -122,28 +122,13 @@ function CrudWorkspace({
           </div>
 
           <div className="button-row">
-            <button
-              className="button"
-              type="button"
-              onClick={saveItem}
-              disabled={isSaving || isLoading}
-            >
+            <button className="button" type="button" onClick={saveItem} disabled={isSaving || isLoading}>
               {isSaving ? '저장 중...' : '저장'}
             </button>
-            <button
-              className="button button--secondary"
-              type="button"
-              onClick={startCreate}
-              disabled={isSaving}
-            >
+            <button className="button button--secondary" type="button" onClick={startCreate} disabled={isSaving}>
               초기화
             </button>
-            <button
-              className="button button--danger"
-              type="button"
-              onClick={deleteItem}
-              disabled={isSaving}
-            >
+            <button className="button button--danger" type="button" onClick={deleteItem} disabled={isSaving}>
               삭제
             </button>
           </div>
@@ -154,3 +139,4 @@ function CrudWorkspace({
 }
 
 export default CrudWorkspace
+

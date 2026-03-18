@@ -1,9 +1,15 @@
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3308}/${DB_NAME:aimentor}?useUnicode=true&characterEncoding=UTF-8
+    url: ${DB_URL:jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:aimentor}?useUnicode=true&characterEncoding=UTF-8}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:1234}
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create}
+
+integration:
+  ai:
+    provider: ${AI_PROVIDER:http-ai}
+    base-url: ${AI_SERVICE_URL:http://localhost:8000}
+

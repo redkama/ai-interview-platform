@@ -6,7 +6,7 @@ import apiClient, {
 } from './client.js'
 import { stubLogin, stubSignup } from './stubDatabase.js'
 
-const useStubApi = import.meta.env.VITE_USE_API_STUB !== 'false'
+const useStubApi = import.meta.env.VITE_USE_API_STUB === 'true'
 
 function normalizeAuthPayload(payload) {
   return {
@@ -69,3 +69,4 @@ const authApi = {
 }
 
 export default authApi
+

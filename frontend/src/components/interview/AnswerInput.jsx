@@ -12,7 +12,9 @@ function AnswerInput({
       <div className="panel__header">
         <div>
           <h3 className="panel__title">답변</h3>
-          <p className="panel__subtitle">현재는 텍스트 입력을 사용하고, 이후 음성 기능으로 대체할 수 있습니다.</p>
+          <p className="panel__subtitle">
+            현재는 텍스트 입력으로 진행하고, 이후 음성 기능으로 확장할 수 있습니다.
+          </p>
         </div>
       </div>
 

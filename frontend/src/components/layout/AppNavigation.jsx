@@ -6,6 +6,12 @@ const navigationItems = [
   { to: '/login', label: '로그인', requiresAuth: false },
   { to: '/signup', label: '회원가입', requiresAuth: false },
   { to: '/dashboard', label: '대시보드', requiresAuth: true },
+  { to: '/education/level-test', label: '영어 레벨 테스트', requiresAuth: true },
+  { to: '/education/english', label: '영어 교육', requiresAuth: true },
+  { to: '/education/history', label: '한국사 교육', requiresAuth: true },
+  { to: '/books', label: '도서', requiresAuth: true },
+  { to: '/cart', label: '장바구니', requiresAuth: true },
+  { to: '/orders', label: '주문', requiresAuth: true },
   { to: '/resume', label: '이력서', requiresAuth: true },
   { to: '/cover-letter', label: '자기소개서', requiresAuth: true },
   { to: '/job-posting', label: '채용공고', requiresAuth: true },
@@ -27,7 +33,7 @@ function AppNavigation() {
   }
 
   return (
-    <nav className="app-nav" aria-label="기본 내비게이션">
+    <nav className="app-nav" aria-label="주요 메뉴">
       {visibleItems.map((item) => (
         <NavLink
           key={item.to}
