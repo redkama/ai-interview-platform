@@ -1,8 +1,10 @@
 package com.aimentor.domain.education.history.service;
 
 import com.aimentor.common.exception.ApiException;
+import com.aimentor.domain.education.history.dto.request.HistoryExplainRequest;
 import com.aimentor.domain.education.history.dto.request.HistoryQuizAnswerRequest;
 import com.aimentor.domain.education.history.dto.request.HistoryQuizSubmitRequest;
+import com.aimentor.domain.education.history.dto.response.HistoryExplainResponse;
 import com.aimentor.domain.education.history.dto.response.HistoryLearningHistoryResponse;
 import com.aimentor.domain.education.history.dto.response.HistoryLessonResponse;
 import com.aimentor.domain.education.history.dto.response.HistoryQuizResponse;
@@ -17,6 +19,9 @@ import com.aimentor.domain.education.history.repository.HistoryLessonRepository;
 import com.aimentor.domain.education.history.repository.HistoryQuizRepository;
 import com.aimentor.domain.user.entity.User;
 import com.aimentor.domain.user.repository.UserRepository;
+import com.aimentor.external.ai.AiIntegrationService;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationRequest;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -34,17 +39,20 @@ public class HistoryEducationService {
     private final HistoryQuizRepository historyQuizRepository;
     private final HistoryLearningHistoryRepository historyLearningHistoryRepository;
     private final UserRepository userRepository;
+    private final AiIntegrationService aiIntegrationService;
 
     public HistoryEducationService(
             HistoryLessonRepository historyLessonRepository,
             HistoryQuizRepository historyQuizRepository,
             HistoryLearningHistoryRepository historyLearningHistoryRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            AiIntegrationService aiIntegrationService
     ) {
         this.historyLessonRepository = historyLessonRepository;
         this.historyQuizRepository = historyQuizRepository;
         this.historyLearningHistoryRepository = historyLearningHistoryRepository;
         this.userRepository = userRepository;
+        this.aiIntegrationService = aiIntegrationService;
     }
 
     public List<HistoryLessonResponse> getLessons(HistoryEra era) {
@@ -66,13 +74,17 @@ public class HistoryEducationService {
                 .toList();
     }
 
+    public HistoryExplainResponse generateExplanation(HistoryExplainRequest request) {
+        return HistoryExplainResponse.from(safelyGenerateHistoryExplanation(request));
+    }
+
     @Transactional
     public HistoryQuizSubmitResponse submitQuiz(Long userId, HistoryQuizSubmitRequest request) {
         User user = getUser(userId);
         HistoryLesson lesson = getLessonEntity(request.lessonId());
         List<HistoryQuiz> quizzes = historyQuizRepository.findAllByLessonIdOrderByIdAsc(lesson.getId());
         if (quizzes.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "HISTORY_QUIZ_NOT_FOUND", "한국사 퀴즈를 찾을 수 없습니다.");
+            throw new ApiException(HttpStatus.NOT_FOUND, "HISTORY_QUIZ_NOT_FOUND", "?쒓뎅???댁쫰瑜?李얠쓣 ???놁뒿?덈떎.");
         }
 
         Map<Long, HistoryQuiz> quizById = quizzes.stream()
@@ -117,7 +129,7 @@ public class HistoryEducationService {
     ) {
         HistoryQuiz quiz = quizById.get(answer.quizId());
         if (quiz == null) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_HISTORY_QUIZ", "해당 레슨에 속하지 않는 퀴즈가 포함되어 있습니다.");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_HISTORY_QUIZ", "?대떦 ?덉뒯???랁븯吏 ?딅뒗 ?댁쫰媛 ?ы븿?섏뼱 ?덉뒿?덈떎.");
         }
         boolean correct = quiz.getAnswer().equals(answer.selectedAnswer());
         return new HistoryQuizSubmissionItemResponse(
@@ -131,11 +143,37 @@ public class HistoryEducationService {
 
     private HistoryLesson getLessonEntity(Long lessonId) {
         return historyLessonRepository.findById(lessonId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "HISTORY_LESSON_NOT_FOUND", "한국사 학습 레슨을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "HISTORY_LESSON_NOT_FOUND", "?쒓뎅???숈뒿 ?덉뒯??李얠쓣 ???놁뒿?덈떎."));
     }
 
     private User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "?ъ슜?먮? 李얠쓣 ???놁뒿?덈떎."));
+    }
+
+    private AiGenerateHistoryExplanationResponse safelyGenerateHistoryExplanation(HistoryExplainRequest request) {
+        try {
+            AiGenerateHistoryExplanationResponse response = aiIntegrationService.generateHistoryExplanation(
+                    new AiGenerateHistoryExplanationRequest(
+                            request.topic(),
+                            request.era().name()
+                    )
+            );
+            if (response != null) {
+                return response;
+            }
+        } catch (Exception ignored) {
+        }
+
+        return new AiGenerateHistoryExplanationResponse(
+                request.topic() + " is a major topic in the " + request.era().name() + " era and should be reviewed with its background and later impact.",
+                List.of(
+                        "Check the political and social background first.",
+                        "Connect the topic to institutional or cultural change.",
+                        "Memorize one concrete event or reform tied to the topic."
+                ),
+                "fallback-ai",
+                true
+        );
     }
 }

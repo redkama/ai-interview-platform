@@ -100,6 +100,19 @@ class HistoryEducationControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.data[0].options").value("[\"Taejo\",\"Sejong\",\"Yeongjo\"]"));
 
+        mockMvc.perform(post("/api/education/history/explain")
+                        .header(HttpHeaders.AUTHORIZATION, bearerToken(accessToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "topic": "Joseon Reforms",
+                                  "era": "JOSEON"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.explanation").isNotEmpty())
+                .andExpect(jsonPath("$.data.keyPoints.length()").value(3));
+
         mockMvc.perform(post("/api/education/history/quiz/submit")
                         .header(HttpHeaders.AUTHORIZATION, bearerToken(accessToken))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -137,6 +150,17 @@ class HistoryEducationControllerIntegrationTest {
 
     @Test
     void historyWriteEndpointsShouldRequireAuthentication() throws Exception {
+        mockMvc.perform(post("/api/education/history/explain")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "topic": "Joseon Reforms",
+                                  "era": "JOSEON"
+                                }
+                                """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("UNAUTHORIZED"));
+
         mockMvc.perform(post("/api/education/history/quiz/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

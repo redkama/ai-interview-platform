@@ -2,6 +2,10 @@ package com.aimentor.external.ai;
 
 import com.aimentor.external.ai.dto.AiAnalyzeAnswerFeedbackRequest;
 import com.aimentor.external.ai.dto.AiAnalyzeAnswerFeedbackResponse;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackRequest;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackResponse;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationRequest;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationResponse;
 import com.aimentor.external.ai.dto.AiGenerateInterviewQuestionsRequest;
 import com.aimentor.external.ai.dto.AiGenerateInterviewQuestionsResponse;
 import com.aimentor.external.ai.dto.AiGenerateReportSummaryRequest;
@@ -106,6 +110,57 @@ public class HttpAiIntegrationService implements AiIntegrationService {
         );
     }
 
+    @Override
+    public AiGenerateEnglishFeedbackResponse generateEnglishFeedback(AiGenerateEnglishFeedbackRequest request) {
+        EnglishFeedbackApiResponse response = restClient.post()
+                .uri("/ai/education/english/feedback")
+                .body(new EnglishFeedbackApiRequest(
+                        nullToEmpty(request.userInput()),
+                        nullToEmpty(request.expectedAnswer()),
+                        nullToEmpty(request.level())
+                ))
+                .retrieve()
+                .body(EnglishFeedbackApiResponse.class);
+
+        EnglishFeedbackApiData data = response == null ? null : response.data();
+        if (data == null) {
+            throw new IllegalStateException("AI english feedback response is empty.");
+        }
+
+        return new AiGenerateEnglishFeedbackResponse(
+                data.is_correct(),
+                data.score(),
+                data.explanation(),
+                data.suggestion(),
+                resolveProviderName(),
+                false
+        );
+    }
+
+    @Override
+    public AiGenerateHistoryExplanationResponse generateHistoryExplanation(AiGenerateHistoryExplanationRequest request) {
+        HistoryExplanationApiResponse response = restClient.post()
+                .uri("/ai/education/history/explain")
+                .body(new HistoryExplanationApiRequest(
+                        nullToEmpty(request.topic()),
+                        nullToEmpty(request.era())
+                ))
+                .retrieve()
+                .body(HistoryExplanationApiResponse.class);
+
+        HistoryExplanationApiData data = response == null ? null : response.data();
+        if (data == null) {
+            throw new IllegalStateException("AI history explanation response is empty.");
+        }
+
+        return new AiGenerateHistoryExplanationResponse(
+                data.explanation(),
+                data.key_points() == null ? List.of() : data.key_points(),
+                resolveProviderName(),
+                false
+        );
+    }
+
     private String resolveProviderName() {
         return properties.provider() == null || properties.provider().isBlank()
                 ? "http-ai"
@@ -181,5 +236,43 @@ public class HttpAiIntegrationService implements AiIntegrationService {
             String summary
     ) {
     }
-}
 
+    private record EnglishFeedbackApiRequest(
+            String user_input,
+            String expected_answer,
+            String level
+    ) {
+    }
+
+    private record EnglishFeedbackApiResponse(
+            boolean success,
+            EnglishFeedbackApiData data
+    ) {
+    }
+
+    private record EnglishFeedbackApiData(
+            boolean is_correct,
+            int score,
+            String explanation,
+            String suggestion
+    ) {
+    }
+
+    private record HistoryExplanationApiRequest(
+            String topic,
+            String era
+    ) {
+    }
+
+    private record HistoryExplanationApiResponse(
+            boolean success,
+            HistoryExplanationApiData data
+    ) {
+    }
+
+    private record HistoryExplanationApiData(
+            String explanation,
+            List<String> key_points
+    ) {
+    }
+}

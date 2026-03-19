@@ -153,7 +153,7 @@ const educationApi = {
       }
     }
 
-    const response = await apiClient.post(resolveBaseUrl('/ai/education/history/explain'), { topic, era })
+    const response = await apiClient.post(resolveBaseUrl('/api/education/history/explain'), { topic, era })
     return response.data?.data ?? response.data
   },
 

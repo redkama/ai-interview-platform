@@ -71,6 +71,20 @@ class EnglishEducationControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.id").value(lessonId))
                 .andExpect(jsonPath("$.data.level").value("BEGINNER"));
 
+        mockMvc.perform(post("/api/education/english/feedback")
+                        .header(HttpHeaders.AUTHORIZATION, bearerToken(accessToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userInput": "I led a team project.",
+                                  "expectedAnswer": "I led a team project.",
+                                  "level": "BEGINNER"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.correct").value(true))
+                .andExpect(jsonPath("$.data.provider").exists());
+
         mockMvc.perform(post("/api/education/english/level-test")
                         .header(HttpHeaders.AUTHORIZATION, bearerToken(accessToken))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -99,6 +113,18 @@ class EnglishEducationControllerIntegrationTest {
 
     @Test
     void englishWriteEndpointsShouldRequireAuthentication() throws Exception {
+        mockMvc.perform(post("/api/education/english/feedback")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "userInput": "test",
+                                  "expectedAnswer": "test",
+                                  "level": "BEGINNER"
+                                }
+                                """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("UNAUTHORIZED"));
+
         mockMvc.perform(post("/api/education/english/level-test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
