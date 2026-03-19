@@ -2,6 +2,10 @@ package com.aimentor.external.ai;
 
 import com.aimentor.external.ai.dto.AiAnalyzeAnswerFeedbackRequest;
 import com.aimentor.external.ai.dto.AiAnalyzeAnswerFeedbackResponse;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackRequest;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackResponse;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationRequest;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationResponse;
 import com.aimentor.external.ai.dto.AiGenerateInterviewQuestionsRequest;
 import com.aimentor.external.ai.dto.AiGenerateInterviewQuestionsResponse;
 import com.aimentor.external.ai.dto.AiGenerateReportSummaryRequest;
@@ -29,7 +33,7 @@ public class StubAiIntegrationService implements AiIntegrationService {
         for (int index = 1; index <= questionCount; index++) {
             questions.add(new AiQuestionItem(
                     index,
-                    request.positionTitle() + " 지원자를 위한 기본 질문 " + index + "입니다."
+                    request.positionTitle() + " interview question " + index
             ));
         }
 
@@ -49,7 +53,7 @@ public class StubAiIntegrationService implements AiIntegrationService {
                 logicScore,
                 specificityScore,
                 overallScore,
-                "로컬 휴리스틱 기반 피드백입니다. 실제 AI 분석을 연결하면 더 정교한 코칭을 받을 수 있습니다.",
+                "Local heuristic feedback is being used because the external AI provider is not active.",
                 resolveProviderName(),
                 true
         );
@@ -60,7 +64,43 @@ public class StubAiIntegrationService implements AiIntegrationService {
         int feedbackCount = request.answerFeedback() == null ? 0 : request.answerFeedback().size();
 
         return new AiGenerateReportSummaryResponse(
-                "'" + request.sessionTitle() + "' 세션의 답변 " + feedbackCount + "개를 바탕으로 만든 기본 요약입니다.",
+                "'" + request.sessionTitle() + "' summary generated from " + feedbackCount + " feedback items.",
+                resolveProviderName(),
+                true
+        );
+    }
+
+    @Override
+    public AiGenerateEnglishFeedbackResponse generateEnglishFeedback(AiGenerateEnglishFeedbackRequest request) {
+        String normalizedInput = normalize(request.userInput());
+        String normalizedExpectedAnswer = normalize(request.expectedAnswer());
+        boolean correct = !normalizedInput.isBlank() && normalizedInput.equalsIgnoreCase(normalizedExpectedAnswer);
+        int score = correct ? 95 : Math.max(40, 60 + similarityBonus(normalizedInput, normalizedExpectedAnswer));
+
+        return new AiGenerateEnglishFeedbackResponse(
+                correct,
+                Math.min(score, 100),
+                correct
+                        ? "The answer matches the expected meaning closely."
+                        : "The answer is understandable, but it misses part of the target expression.",
+                correct
+                        ? "Try expanding it with one more supporting sentence."
+                        : "Reuse the key verbs and sentence structure from the expected answer.",
+                resolveProviderName(),
+                true
+        );
+    }
+
+    @Override
+    public AiGenerateHistoryExplanationResponse generateHistoryExplanation(AiGenerateHistoryExplanationRequest request) {
+        return new AiGenerateHistoryExplanationResponse(
+                request.topic() + " should be studied together with the political background and social changes of the "
+                        + request.era() + " era.",
+                List.of(
+                        "Start from the era's political structure and major actors.",
+                        "Connect the topic to reforms, conflict, or institutional change.",
+                        "Remember one concrete outcome that continued into the next period."
+                ),
                 resolveProviderName(),
                 true
         );
@@ -70,5 +110,25 @@ public class StubAiIntegrationService implements AiIntegrationService {
         return properties.provider() == null || properties.provider().isBlank()
                 ? "stub-ai"
                 : properties.provider();
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim().replaceAll("\\s+", " ");
+    }
+
+    private int similarityBonus(String input, String expectedAnswer) {
+        if (input.isBlank() || expectedAnswer.isBlank()) {
+            return 0;
+        }
+
+        int shorterLength = Math.min(input.length(), expectedAnswer.length());
+        int sharedPrefixLength = 0;
+        for (int index = 0; index < shorterLength; index++) {
+            if (Character.toLowerCase(input.charAt(index)) != Character.toLowerCase(expectedAnswer.charAt(index))) {
+                break;
+            }
+            sharedPrefixLength++;
+        }
+        return sharedPrefixLength * 3;
     }
 }

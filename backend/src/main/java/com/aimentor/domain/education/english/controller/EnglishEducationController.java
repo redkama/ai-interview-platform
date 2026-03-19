@@ -2,8 +2,10 @@ package com.aimentor.domain.education.english.controller;
 
 import com.aimentor.common.api.ApiResponse;
 import com.aimentor.common.security.AuthenticatedUser;
+import com.aimentor.domain.education.english.dto.request.EnglishFeedbackRequest;
 import com.aimentor.domain.education.english.dto.request.EnglishLearningHistoryCreateRequest;
 import com.aimentor.domain.education.english.dto.request.EnglishLevelTestRequest;
+import com.aimentor.domain.education.english.dto.response.EnglishFeedbackResponse;
 import com.aimentor.domain.education.english.dto.response.EnglishLearningHistoryResponse;
 import com.aimentor.domain.education.english.dto.response.EnglishLessonResponse;
 import com.aimentor.domain.education.english.dto.response.LevelTestResultResponse;
@@ -38,6 +40,14 @@ public class EnglishEducationController {
     @GetMapping("/lessons/{id}")
     public ApiResponse<EnglishLessonResponse> getLesson(@PathVariable Long id) {
         return ApiResponse.success(englishEducationService.getLesson(id));
+    }
+
+    @PostMapping("/feedback")
+    public ApiResponse<EnglishFeedbackResponse> generateFeedback(
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
+            @Valid @RequestBody EnglishFeedbackRequest request
+    ) {
+        return ApiResponse.success(englishEducationService.generateFeedback(request));
     }
 
     @PostMapping("/level-test")

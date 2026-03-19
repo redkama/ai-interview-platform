@@ -1,8 +1,10 @@
 package com.aimentor.domain.education.english.service;
 
 import com.aimentor.common.exception.ApiException;
+import com.aimentor.domain.education.english.dto.request.EnglishFeedbackRequest;
 import com.aimentor.domain.education.english.dto.request.EnglishLearningHistoryCreateRequest;
 import com.aimentor.domain.education.english.dto.request.EnglishLevelTestRequest;
+import com.aimentor.domain.education.english.dto.response.EnglishFeedbackResponse;
 import com.aimentor.domain.education.english.dto.response.EnglishLearningHistoryResponse;
 import com.aimentor.domain.education.english.dto.response.EnglishLessonResponse;
 import com.aimentor.domain.education.english.dto.response.LevelTestResultResponse;
@@ -15,6 +17,9 @@ import com.aimentor.domain.education.english.repository.EnglishLessonRepository;
 import com.aimentor.domain.education.english.repository.LevelTestResultRepository;
 import com.aimentor.domain.user.entity.User;
 import com.aimentor.domain.user.repository.UserRepository;
+import com.aimentor.external.ai.AiIntegrationService;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackRequest;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -29,17 +34,20 @@ public class EnglishEducationService {
     private final EnglishLearningHistoryRepository englishLearningHistoryRepository;
     private final LevelTestResultRepository levelTestResultRepository;
     private final UserRepository userRepository;
+    private final AiIntegrationService aiIntegrationService;
 
     public EnglishEducationService(
             EnglishLessonRepository englishLessonRepository,
             EnglishLearningHistoryRepository englishLearningHistoryRepository,
             LevelTestResultRepository levelTestResultRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            AiIntegrationService aiIntegrationService
     ) {
         this.englishLessonRepository = englishLessonRepository;
         this.englishLearningHistoryRepository = englishLearningHistoryRepository;
         this.levelTestResultRepository = levelTestResultRepository;
         this.userRepository = userRepository;
+        this.aiIntegrationService = aiIntegrationService;
     }
 
     public List<EnglishLessonResponse> getLessons(EnglishLevel level) {
@@ -51,6 +59,10 @@ public class EnglishEducationService {
 
     public EnglishLessonResponse getLesson(Long lessonId) {
         return EnglishLessonResponse.from(getLessonEntity(lessonId));
+    }
+
+    public EnglishFeedbackResponse generateFeedback(EnglishFeedbackRequest request) {
+        return EnglishFeedbackResponse.from(safelyGenerateEnglishFeedback(request));
     }
 
     @Transactional
@@ -80,12 +92,12 @@ public class EnglishEducationService {
 
     private EnglishLesson getLessonEntity(Long lessonId) {
         return englishLessonRepository.findById(lessonId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "ENGLISH_LESSON_NOT_FOUND", "영어 학습 레슨을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "ENGLISH_LESSON_NOT_FOUND", "?곸뼱 ?숈뒿 ?덉뒯??李얠쓣 ???놁뒿?덈떎."));
     }
 
     private User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "?ъ슜?먮? 李얠쓣 ???놁뒿?덈떎."));
     }
 
     private EnglishLevel resolveLevel(int testScore) {
@@ -96,5 +108,35 @@ public class EnglishEducationService {
             return EnglishLevel.INTERMEDIATE;
         }
         return EnglishLevel.BEGINNER;
+    }
+
+    private AiGenerateEnglishFeedbackResponse safelyGenerateEnglishFeedback(EnglishFeedbackRequest request) {
+        try {
+            AiGenerateEnglishFeedbackResponse response = aiIntegrationService.generateEnglishFeedback(
+                    new AiGenerateEnglishFeedbackRequest(
+                            request.userInput(),
+                            request.expectedAnswer(),
+                            request.level().name()
+                    )
+            );
+            if (response != null) {
+                return response;
+            }
+        } catch (Exception ignored) {
+        }
+
+        boolean correct = request.userInput().trim().equalsIgnoreCase(request.expectedAnswer().trim());
+        return new AiGenerateEnglishFeedbackResponse(
+                correct,
+                correct ? 90 : 55,
+                correct
+                        ? "The answer is aligned with the expected expression."
+                        : "The answer partially matches, but the target wording should be closer.",
+                correct
+                        ? "Add one more sentence to make the answer sound more natural."
+                        : "Compare your response with the expected answer and reuse the main verbs.",
+                "fallback-ai",
+                true
+        );
     }
 }
