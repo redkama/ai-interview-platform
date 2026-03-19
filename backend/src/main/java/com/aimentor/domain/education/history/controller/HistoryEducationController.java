@@ -2,7 +2,9 @@ package com.aimentor.domain.education.history.controller;
 
 import com.aimentor.common.api.ApiResponse;
 import com.aimentor.common.security.AuthenticatedUser;
+import com.aimentor.domain.education.history.dto.request.HistoryExplainRequest;
 import com.aimentor.domain.education.history.dto.request.HistoryQuizSubmitRequest;
+import com.aimentor.domain.education.history.dto.response.HistoryExplainResponse;
 import com.aimentor.domain.education.history.dto.response.HistoryLearningHistoryResponse;
 import com.aimentor.domain.education.history.dto.response.HistoryLessonResponse;
 import com.aimentor.domain.education.history.dto.response.HistoryQuizResponse;
@@ -43,6 +45,14 @@ public class HistoryEducationController {
     @GetMapping("/lessons/{id}/quiz")
     public ApiResponse<List<HistoryQuizResponse>> getLessonQuiz(@PathVariable Long id) {
         return ApiResponse.success(historyEducationService.getLessonQuiz(id));
+    }
+
+    @PostMapping("/explain")
+    public ApiResponse<HistoryExplainResponse> generateExplanation(
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
+            @Valid @RequestBody HistoryExplainRequest request
+    ) {
+        return ApiResponse.success(historyEducationService.generateExplanation(request));
     }
 
     @PostMapping("/quiz/submit")

@@ -2,6 +2,10 @@ package com.aimentor.external.ai;
 
 import com.aimentor.external.ai.dto.AiAnalyzeAnswerFeedbackRequest;
 import com.aimentor.external.ai.dto.AiAnalyzeAnswerFeedbackResponse;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackRequest;
+import com.aimentor.external.ai.dto.AiGenerateEnglishFeedbackResponse;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationRequest;
+import com.aimentor.external.ai.dto.AiGenerateHistoryExplanationResponse;
 import com.aimentor.external.ai.dto.AiGenerateInterviewQuestionsRequest;
 import com.aimentor.external.ai.dto.AiGenerateInterviewQuestionsResponse;
 import com.aimentor.external.ai.dto.AiGenerateReportSummaryRequest;
@@ -14,4 +18,8 @@ public interface AiIntegrationService {
     AiAnalyzeAnswerFeedbackResponse analyzeAnswerFeedback(AiAnalyzeAnswerFeedbackRequest request);
 
     AiGenerateReportSummaryResponse generateReportSummary(AiGenerateReportSummaryRequest request);
+
+    AiGenerateEnglishFeedbackResponse generateEnglishFeedback(AiGenerateEnglishFeedbackRequest request);
+
+    AiGenerateHistoryExplanationResponse generateHistoryExplanation(AiGenerateHistoryExplanationRequest request);
 }
